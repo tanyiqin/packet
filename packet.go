@@ -6,7 +6,7 @@ import (
 	"io"
 )
 
-type msgPacket struct {
+type MsgPacket struct {
 	// 消息体长度
 	lenMsgLen int
 	minMsgLen uint32
@@ -15,10 +15,10 @@ type msgPacket struct {
 	littleEndian bool
 }
 
-type Opt func(*msgPacket)
+type Opt func(*MsgPacket)
 
-func NewPacket(ops ...Opt) *msgPacket {
-	mp := &msgPacket{
+func NewPacket(ops ...Opt) *MsgPacket {
+	mp := &MsgPacket{
 		lenMsgLen: 4,
 		minMsgLen: 1,
 		maxMsgLen: 4096,
@@ -31,30 +31,30 @@ func NewPacket(ops ...Opt) *msgPacket {
 }
 
 func WithByteOrder(littleEndian bool) Opt {
-	return func(p *msgPacket) {
+	return func(p *MsgPacket) {
 		p.littleEndian = littleEndian
 	}
 }
 
 func WithLenMsgLen(lenMsgLen int) Opt {
-	return func(p *msgPacket) {
+	return func(p *MsgPacket) {
 		p.lenMsgLen = lenMsgLen
 	}
 }
 
 func WithMinMsgLen(minMsgLen uint32) Opt {
-	return func(p *msgPacket) {
+	return func(p *MsgPacket) {
 		p.minMsgLen = minMsgLen
 	}
 }
 
 func WithMaxMsgLen(maxMsgLen uint32) Opt {
-	return func(p *msgPacket) {
+	return func(p *MsgPacket) {
 		p.maxMsgLen = maxMsgLen
 	}
 }
 
-func (p *msgPacket) Read(reader io.Reader) ([]byte, error) {
+func (p *MsgPacket) Read(reader io.Reader) ([]byte, error) {
 	var b [4]byte
 	bufMsgLen := b[:p.lenMsgLen]
 
@@ -100,7 +100,7 @@ func (p *msgPacket) Read(reader io.Reader) ([]byte, error) {
 }
 
 // 打包消息内容
-func (p *msgPacket) Pack(args []byte) ([]byte, error){
+func (p *MsgPacket) Pack(args []byte) ([]byte, error){
 	// 获取消息长度
 	msgLen := uint32(len(args))
 
